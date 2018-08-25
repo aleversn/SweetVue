@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Creator</title>
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/SweetVue-1.0.0.js"></script>
+<link rel="stylesheet" href="css/sweet.css"/>
+</head>
+
+<body>
+<div id="ch" @click="isSelected" style="display: none;">
+    <unit :now="now"></unit>
+</div>
+<!--
+<div class="combobox" style="width: 80px;">
+    <div class="combobox-item-container">
+        <option>a</option>
+        <option>b</option>
+        <option>c</option>
+    </div>
+    <p style="width: 100%; padding: 5px;">Now</p>
+    <p style="padding: 5px; font-family: Segoe MDL2; font-size: 12px; color: rgba(36,36,36,0.5);">&#xE70D;</p>
+</div>
+-->
+<div xSweet="UI">
+    <scroll-sticky xOffset="0">
+        <glass-button>OK</glass-button>
+    </scroll-sticky>
+    <glass-button>OK</glass-button>
+    <combobox>
+        <p>a</p>
+        <p>b</p>
+        <p>c</p>
+    </combobox>
+    <progress-ring></progress-ring>
+    <progress-bar xLoading="true"></progress-bar>
+    <checkbox></checkbox>
+    <searchbox xIconColor="rgba(0,153,204,1)"></searchbox>
+    <toggle-switch xOnContent="Open" xOffContent="Close" xIsOn="true"></toggle-switch>
+    <treeview xJson="objs"></treeview>
+    <parallax-view xSource="res/158.jpg" xAcrylic="true">
+        <calendar-view xTheme="dark"></calendar-view>
+    </parallax-view>
+    <x-binding xData="objs">
+        <div slot-scope="x">Container
+            <p :value="x.binding.name">{{x.binding.name}}</p>
+            <p>{{x.binding.value}}</p>
+        </div>
+    </x-binding>
+<!--
+    <flipview style="height: 500px;">
+        <div style="background: rgba(242,242,242,1);"><img alt="" src="res/10.jpg"/></div>
+        <div style="background: red;"><img alt="" src="res/158.jpg"/></div>
+        <div style="background: green;"><img alt="" src="res/159.jpg"/></div>
+    </flipview>
+-->
+    <!-- <div class="treeview">
+        <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
+        <div class="item drop-down"><p style="font-family: Segoe MDL2; visibility: hidden;">&#xE0E3;</p><p>1</p></div>
+        <div class="treeview">
+            <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
+            <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
+        </div>
+    </div> -->
+</div>
+<div xSweet="UI">
+    <progress-ring></progress-ring>
+</div>
+<script>
+    console.log(Sweet.Controls);
+    var objs = [
+        {name:"lpc",value:"1",children:[
+            {name:"lpc1",value:"11",children:[
+                {name:"lpc11",value:"111",children:null}
+            ]},
+            {name:"lpc2",value:"2",children:null},
+            {name:"lpc3",value:"3",children:null}
+        ]},
+        {name:"wsj",value:"4",children:null},
+        {name:"zxf",value:"5",children:null}
+    ];
+</script>
+
+<script>
+    $(function(){
+        var checkBox = new Vue({
+            el: "#ch",
+            data:{
+                selected:false,
+                now:"Now"
+            },
+            components:{
+                'unit':{
+                    template:`<div class="combobox" style="width: 80px;">
+                                    <div class="combobox-item-container">
+                                        <option v-for="item in items">{{item}}</option>
+                                    </div>
+                                    <p style="width: 100%; padding: 5px;">{{now}}</p>
+                                    <p style="padding: 5px; font-family: Segoe MDL2; font-size: 12px; color: rgba(36,36,36,0.5);">&#xE70D;</p>
+                                </div>`,
+                    data: function(){
+                        return {items:["a","b","c"]};
+                    },
+                    props: ["now"]
+                }
+            },
+            methods:{
+                isSelected: function(e){
+                    if(this.selected)
+                    {
+                        $("#ch").find(".combobox-item-container").fadeOut(10);
+                        this.selected = false;
+                        this.now = e.target.innerHTML;
+                    }
+                    else
+                    {
+                        $("#ch").find(".combobox-item-container").fadeIn(10);
+                        this.selected = true;
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

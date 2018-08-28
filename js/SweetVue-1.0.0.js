@@ -1,6 +1,25 @@
 /*Copyright by Creator SN™*/
 (function(){
     //UIControls Init//
+    function SelfChecking()
+    {
+        try{
+            $(function(){});
+        }
+        catch(e){
+            console.error(`Sweet Warning: jquery.js is required, please use <script src="{path}"></script> to import it before sweetvue.js is imported!`,'color: red');
+            return false;
+        }
+        try{
+            new Vue();
+        }
+        catch(e){
+            console.error(`Sweet Warning: vue.js is required, please use <script src="{path}"></script> to import it before sweetvue.js is imported!`,'color: red');
+            return false;
+        }
+        return true;
+    }
+    if(!SelfChecking()){return false;}
     $(function(){
         Vue.component('glass-button',{
             template:`<button class="gbutton" :class="{light:theme}"><slot></slot></button>`,
@@ -40,17 +59,23 @@
         });
         //SearchBox//xIcon,xIconColor
         Vue.component('searchbox',{
-            template:`<div class="sinput search" style="height:25px;">
-                        <input style="width:100%; background:transparent; border:none; outline:none; box-shadow:none;"/>
-                        <p class="search-icon" :style="xIconColor" @mousedown="Clicked" @mouseup="ClickedUp">{{xIcon}}</p>
+            template:`<div class="sinput search" style="height:25px;" :value="content">
+                        <input style="width:100%; background:transparent; border:none; outline:none; box-shadow:none;" v-model="content" ref="input"/>
+                        <p class="search-icon" :style="xIconColor" @mousedown="Clicked" @mouseup="ClickedUp" ref="icon">{{xIcon}}</p>
                     </div>`,
             data: function(){
-                return {xIcon:"&#xE721;",xIconColor:{
-                    color:"rgba(36,36,36,1)"
-                }};
+                return {
+                    xIcon:"&#xE721;",
+                    xIconColor:
+                    {
+                        color:"rgba(36,36,36,1)"
+                    },
+                    content:""
+                };
             },
             mounted:function(){
-                var el = this.$el;
+                let el = this.$el;
+                let target = this;
                 switch($(el).attr("xIcon"))
                 {
                     case "Search":
@@ -62,6 +87,12 @@
                 }
                 if($(el).attr("xIconColor")!=null)
                     this.xIconColor.color = $(el).attr("xIconColor");
+                if($(el).attr("placeholder")!=null)
+                    $(this.$refs.input).attr("placeholder",$(el).attr("placeholder"));
+                if($(el).attr("xChange")!=null)
+                    $(this.$refs.input).keyup(function(){eval(`${$(el).attr("xChange")}("${$(target.$refs.input).val()}")`)});
+                if($(el).attr("xIconClick")!=null)
+                    $(this.$refs.icon).click(function(){eval(`${$(el).attr("onchange")}("${$(target.$refs.input).val()}")`)});
             },
             methods:{
                 Clicked: function(){
@@ -80,7 +111,7 @@
             template:`<div class="combobox" ref="co_head" style="width: 80px;" @click="isSelected">
                         <div v-show="false" ref="itemContainer"><slot></slot></div>
                         <div v-show="status" class="combobox-item-container" ref="co_items">
-                            <option v-for="(item,index) in items" :class="{choose:index==currentIndex}" @click="Choose">{{item.name==null?item:item.name}}</option>
+                            <option v-for="(item,index) in items" :class="{choose:index==currentIndex}" :index="index" @click="Choose">{{item.name==null?item:item.name}}</option>
                         </div>
                         <p style="width: 100%; padding: 5px;">{{now}}</p>
                         <p style="padding: 5px; font-family: Segoe MDL2; font-size: 12px; color: rgba(36,36,36,0.5);">&#xE70D;</p>
@@ -96,6 +127,7 @@
             },
             mounted:function(){
                 let el = this.$el;
+                let target = this;
                 if($(this.$refs.itemContainer).children("*").length>0)  //以插槽形式赋值//
                 {
                     let titems = [];
@@ -111,17 +143,24 @@
                 else if($(el).attr("xJson")!=undefined) //以Json形式赋值//
                 {
                     this.items = eval(`${$(el).attr("xJson")}`);
-                    for(let i = 0; i < this.items.length; i++)
-                    {
-                        if(this.items[i].default==true)
-                        {
-                            this.now = this.items[i].name;
-                            this.value = this.items[i].value;
-                            break;
+                    this.updateItems();
+                }
+                else if($(el).attr("xData")!=undefined)
+                {
+                    this.items = eval(`${$(el).attr("xData")}.xData`);
+                    Object.defineProperty(eval(`${$(el).attr("xData")}`),'xData',{  //设立xData监听//
+                        get: function(){
+                            return xData;
+                        },
+                        set: function(value){
+                            xData = value;
+                            target.items = eval(`${$(el).attr("xData")}.xData`);
+                            target.updateItems();
+                            target.now = target.items[0].name;
+                            target.value = target.items[0].value;
                         }
-                    }
-                    this.now = this.value==-1?this.items[0].name:this.now;
-                    this.value = this.value==-1?this.items[0].value:this.value;
+                    });
+                    this.updateItems();
                 }
             },
             methods:{
@@ -141,6 +180,22 @@
                     },200,function(){
                         el.status=!el.status;
                     });
+                    //xFunc//
+                    if($(el.$el).attr("xFunc")!=undefined)
+                        eval(`${$(el.$el).attr("xFunc")}('${this.value}',${this.currentIndex})`);
+                },
+                updateItems: function(){
+                    for(let i = 0; i < this.items.length; i++)
+                    {
+                        if(this.items[i].default==true)
+                        {
+                            this.now = this.items[i].name;
+                            this.value = this.items[i].value;
+                            break;
+                        }
+                    }
+                    this.now = this.value==-1?this.items[0].name:this.now;
+                    this.value = this.value==-1?this.items[0].value:this.value;
                 }
             }
         });
@@ -816,7 +871,21 @@
                                 target.success = false;
                         },true);
                     else
-                        this.objs = eval(`${uri}`);
+                    {
+                        this.objs = eval(`${uri}.xData`);
+                        Object.defineProperty(eval(`${uri}`),'xData',{  //设立xData监听//
+                            get: function(){
+                                return xData;
+                            },
+                            set: function(value){
+                                xData = value;
+                                target.objs = eval(`${uri}.xData`);
+                                target.success = !(target.objs.length<=0);  
+                            }
+                        });
+                        if(this.objs.length<=0)
+                            this.success = false;
+                    }
                 }
                 else
                     this.success = false;

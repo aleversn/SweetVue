@@ -37,7 +37,7 @@
 ```
 
 ## Sweet 实例
-组件的引用外层需包裹一个<div xSweet="UI">标签
+组件的引用外层需包裹一个&lt;div xSweet="UI"&gt;标签
 ```html
 <div xSweet="UI">
     <progress-ring></progress-ring>

@@ -106,7 +106,7 @@
                 }
             }
         });
-        //ComboBox//
+        //ComboBox//xJson,xData//
         Vue.component('combobox',{
             template:`<div class="combobox" ref="co_head" style="width: 80px;" @click="isSelected">
                         <div v-show="false" ref="itemContainer"><slot></slot></div>

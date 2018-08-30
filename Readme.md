@@ -1,6 +1,4 @@
-<div style="display: flex; justify-content: center; align-items: center;">
-    <img src="logo.png" alt="logo.png" style="width: 200px; height: auto;" title="SweetVue logo"/>
-</div>
+<img width="350px" src="logo.png" alt="logo.png" style="width: 200px; height: auto;" title="SweetVue logo"/>
 
 # SweetVue.js
 ##### 基于Vue和jQuery的响应式组件框架
@@ -47,3 +45,133 @@
 ```
     当然你也可以在<body>中引入全局的<div xSweet="UI">标签,这样就不需要再一一包裹外层标签了。
     但是要注意绝对不允许在<div xSweet="UI">标签内写<script>脚本。
+
+
+## Sweet 组件
+目前Sweet一共包含13个基本组件
+```html
+<glass-button>  <!-- FDS样式按钮 -->
+<checkbox>  <!-- 复选框 -->
+<combobox>  <!-- 下拉框 -->
+<searchbox> <!-- 搜索框 -->
+<progress-ring> <!-- 进度环 -->
+<progress-bar>  <!-- 进度条 -->
+<flipview>  <!-- 滚动播放视图 -->
+<scroll-sticky> <!-- 自动吸顶标签 -->
+<toggle-switch> <!-- 触发器按钮 -->
+<treeview>  <!-- 树形菜单视图 -->
+<calendar-view> <!-- 日历表视图 -->
+<parallax-view> <!-- 渐进背景视图 -->
+<x-binding> <!-- 模板绑定组件 -->
+```
+
+### GlassButton
+- [x] 暗黑主题
+- [x] 重定义样式
+- [x] 可嵌套数据
+- [ ] 固定数据绑定(xJson)
+- [ ] 响应式数据绑定(xData)
+- [ ] 回调事件(xFunc)
+
+|    属性(attr)    |     可选值(prop)   | 必填(required)|说明(statement)|
+|:----------------:|:-----------------:|:-------------:|:------------:|
+|   xTheme   |     light,dark   |  No    | 样式主题,缺省为亮色  |
+
+```html
+<glass-button>OK</glass-button>
+<glass-button xTheme="dark">OK</glass-button>   <!-- 暗色主题按钮 -->
+<glass-button class="xxx" style="color: rgba(0,153,204,1);">OK</glass-button>   <!-- 重定义Css -->
+```
+
+### CheckBox
+- [ ] 暗黑主题
+- [x] 重定义样式(局部)
+- [ ] 可嵌套数据
+- [ ] 固定数据绑定(xJson)
+- [ ] 响应式数据绑定(xData)
+- [ ] 回调事件(xFunc)
+
+|    属性(attr)    |     可选值(prop)   | 必填(required)|说明(statement)|
+|:----------------:|:-----------------:|:-------------:|:------------:|
+|   xContent   |    {文本内容}   |  No    | 复选框内容  |
+
+```html
+<checkbox></checkbox>
+<checkbox xContent="OK"></checkbox>   <!-- 复选框内容 -->
+<checkbox style="color: rgba(0,153,204,1);">OK</checkbox>   <!-- 重定义Css(目前只支持color) -->
+```
+
+### ComboBox
+- [ ] 暗黑主题
+- [ ] 重定义样式
+- [x] 可嵌套数据
+- [x] 固定数据绑定(xJson)
+- [x] 响应式数据绑定(xData)
+- [x] 回调事件(xFunc)
+
+|    属性(attr)    |     可选值(prop)   | 必填(required)|说明(statement)|
+|:----------------:|:-----------------:|:-------------:|:------------:|
+|   xJson   |     {变量名}   |  No    | Json数据  |
+|   xData   |     {变量名},{Url}   |  No    | xData数据  |
+|   xFunc   |     {函数名}   |  No    | 回调函数(val,index)  |
+
+
+#### 对于ComboBox,您可以通过三种方式绑定数据
+方式一
+```html
+<combobox xFunc="Call">
+    <p>a</p>
+    <p value="b">b</p>
+    <p>c</p>
+</combobox>
+```
+直接在combobox标签内部添加元素,元素标签没有限制,但最好使用&lt;option&gt;或&lt;p&gt;标签等包含选项内容,若标签含有value,则该选项返回值为value,否则该项回调返回值为索引index。
+```javascript
+//回调函数//参数一:当前选项value//参数二:当前选项index//
+function Call(val,index){
+    alert(val,index);
+}
+```
+
+方式二
+```javascript
+let json = [
+    {name:"张三",value:"1",children:[
+        {name:"李维",value:"11",children:[
+            {name:"刘法",value:"111",children:null}
+        ]},
+        {name:"灵灵",value:"2",children:null},
+        {name:"周兰",value:"3",children:null}
+    ]},
+    {name:"李四",value:"4",children:null},
+    {name:"王二麻子",value:"5",children:null}
+];
+```
+```html
+<combobox xJson="json"></combobox>
+```
+通过xJson形式添加，此方法不具备双向绑定，因此初始化后外部变量(json)的变化不影响combobox的选项。
+
+```javascript
+let data = {xData:[
+    {name:"张三",value:"1",children:[
+        {name:"李维",value:"11",children:[
+            {name:"刘法",value:"111",children:null}
+        ]},
+        {name:"灵灵",value:"2",children:null},
+        {name:"周兰",value:"3",children:null}
+    ]},
+    {name:"李四",value:"4",children:null},
+    {name:"王二麻子",value:"5",children:null}
+]};
+```
+方式三
+```html
+<combobox xData="data"></combobox>
+```
+通过xData形式添加，此方法可全局双向绑定，注意当前data初始化时，数据应当添加在data.xData中，当外部变量data.xData变化时，combobox内部选项会随之一起改变。
+
+```html
+<combobox xData="/myaction/getdata"></combobox>
+```
+你也可以在xData直接输入Url,它将在页面初始化时自动从Url获取数据，但是此后同样无法再改变内部数据。

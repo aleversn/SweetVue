@@ -57,7 +57,7 @@
                 }
             }
         });
-        //SearchBox//xIcon,xIconColor
+        //SearchBox//xIcon,xIconColor,xChange,xIconClick//
         Vue.component('searchbox',{
             template:`<div class="sinput search" style="height:25px;" :value="content">
                         <input style="width:100%; background:transparent; border:none; outline:none; box-shadow:none;" v-model="content" ref="input"/>
@@ -82,6 +82,14 @@
                         this.xIcon = "\uE721";
                     case "Filter":
                         this.xIcon = "\uE16E";
+                    case "Check":
+                        this.xIcon = "\uE15E";
+                    case "Edit":
+                        this.xIcon = "\uE70F";
+                    case "Submit":
+                        this.xIcon = "\uE930";
+                    case "Voice":
+                        this.xIcon = "\uE1D6";
                     default:
                         this.xIcon = "\uE721";
                 }
@@ -92,7 +100,7 @@
                 if($(el).attr("xChange")!=null)
                     $(this.$refs.input).keyup(function(){eval(`${$(el).attr("xChange")}("${$(target.$refs.input).val()}")`)});
                 if($(el).attr("xIconClick")!=null)
-                    $(this.$refs.icon).click(function(){eval(`${$(el).attr("onchange")}("${$(target.$refs.input).val()}")`)});
+                    $(this.$refs.icon).click(function(){eval(`${$(el).attr("xIconClick")}("${$(target.$refs.input).val()}")`)});
             },
             methods:{
                 Clicked: function(){
@@ -147,20 +155,31 @@
                 }
                 else if($(el).attr("xData")!=undefined)
                 {
-                    this.items = eval(`${$(el).attr("xData")}.xData`);
-                    Object.defineProperty(eval(`${$(el).attr("xData")}`),'xData',{  //设立xData监听//
-                        get: function(){
-                            return xData;
-                        },
-                        set: function(value){
-                            xData = value;
-                            target.items = eval(`${$(el).attr("xData")}.xData`);
-                            target.updateItems();
-                            target.now = target.items[0].name;
-                            target.value = target.items[0].value;
-                        }
-                    });
-                    this.updateItems();
+                    let uri = $(el).attr("xData");
+                    if(uri.indexOf('/')>=0)
+                    {
+                        Sweet.AjaxGetAsync(uri,function(data){
+                            if(data!=null&&data.length>0)
+                                target.items = data;
+                        },true);
+                    }
+                    else
+                    {
+                        this.items = eval(`${uri}.xData`);
+                        Object.defineProperty(eval(`${uri}`),'xData',{  //设立xData监听//
+                            get: function(){
+                                return xData;
+                            },
+                            set: function(value){
+                                xData = value;
+                                target.items = eval(`${uri}.xData`);
+                                target.updateItems();
+                                target.now = target.items[0].name;
+                                target.value = target.items[0].value;
+                            }
+                        });
+                        this.updateItems();
+                    }
                 }
             },
             methods:{
@@ -199,50 +218,89 @@
                 }
             }
         });
-        //ProgressRing//xSize
+        //ProgressRing//xSize,xColor//
         Vue.component('progress-ring',{
             template:`<div :class="['s-progressring',size]">
-                        <p></p>
-                        <p></p>
-                        <p></p>
-                        <p></p>
-                        <p></p>
-                        <p></p>
+                        <p v-for="i in num" :style="{background:color}"></p>
                     </div>`,
             data:function(){
-                return {size:"xs"}
+                return {
+                    num: 5,
+                    size: "xs",
+                    color: ""
+                }
             },
             mounted: function(){
                 var el = this.$el;
                 var legal = "l,m,s,xs";
                 if(legal.indexOf($(el).attr("xSize"))>=0)
                     this.size = $(el).attr("xSize");
+                if($(el).attr("xColor")!=undefined)
+                    this.color = $(el).attr("xColor");
             }
         });
-        //ProgressRing//xLoading//xFunc(target.percent)//
+        //ProgressRing//xLoading,xColor,xPercent,xFunc(percent)//
         Vue.component('progress-bar',{
             template:`<div class="s-progressbar" :class="{normal:!loading}" :value="percent<=100?percent:100">
-                        <p v-for="i in num"></p>
-                        <i v-if="!loading" :style="{'width':(percent<=100?percent:100)+'%'}"></i>
+                        <p v-for="i in num" :style="{background:color}"></p>
+                        <i v-if="!loading" :style="{'width':(percent<=100?percent:100)+'%',background:color}"></i>
                     </div>`,
             data:function(){
                 return {
                     num: 0,
                     percent: 0,
-                    loading: false
+                    loading: false,
+                    color: "",
+                    isFinished: false
                 }
             },
             mounted: function(){
                 var el = this.$el;
+                if($(el).attr("xColor")!=undefined)
+                    this.color = $(el).attr("xColor");
                 if($(el).attr("xLoading")=="true")
                 {
                     this.loading = true;
                     this.num = 5;
                 }
-                else if($(el).attr("xFunc")!=undefined)
+                else if($(el).attr("xPercent")!=undefined)
                 {
                     let target = this;
-                    eval(`${$(el).attr("xFunc")}(target)`);
+                    let pName = $(el).attr("xPercent");
+                    this.percent = eval(`${pName}.ratio`)==undefined?0:eval(`${pName}.ratio`);
+                    Object.defineProperty(eval(`${pName}`),'ratio',{
+                        get: function(){
+                            return ratio;
+                        },
+                        set: function(value){
+                            ratio = value;
+                            target.percent = eval(`${pName}.ratio`);
+                        }
+                    });
+                    eval(`${pName}.ratio=0`);   //单属性值一定要初始化//
+                }
+            },
+            watch: {
+                percent: function(){
+                    let el = this.$el;
+                    let funcs = $(el).attr("xFunc");
+                    let func = null;
+                    if(funcs!=undefined)
+                    {
+                        func = funcs.toString().split(' ')[0];
+                        eval(`${func}(${this.percent})`);
+                        if(this.percent<100){   //当比例小于100将重置isFinished//
+                            this.isFinished = false;
+                        }
+                        if(funcs.split(' ').length>1)   //如果存在finished函数则执行//
+                        {
+                            func = funcs.toString().split(' ')[1];
+                            if(this.percent>=100&&!this.isFinished){
+                                eval(`${func}(${this.percent})`);
+                                this.isFinished = true;
+                            }
+                        }
+                    }
                 }
             }
         });
@@ -456,7 +514,7 @@
                 });
             }
         });
-        //ToggleSwitch//xOnContent,xOffContent,xOnContentColor,xOffContentColor,xTheme,xIsOn,xOutline,xRingBackground,xOnBackground//
+        //ToggleSwitch//xOnContent,xOffContent,xOnContentColor,xOffContentColor,xTheme,xIsOn,xOutline,xRingBackground,xOnBackground,xFunc//
         Vue.component('toggle-switch',{
             template:`<div class="toggle-switch" @click="toggle">
                         <div :class="{'toggle-on':active, dark:darktheme}" :style="themeOutlineStyle()">
@@ -541,6 +599,13 @@
                         this.statusContent=this.statusContentArray[0];
                     else
                         this.statusContent=this.statusContentArray[1];
+                }
+            },
+            watch: {
+                active: function(){
+                    let el = this.$el;
+                    if($(el).attr("xFunc")!=undefined)
+                        eval(`${$(el).attr("xFunc")}(${this.active})`);
                 }
             }
         });

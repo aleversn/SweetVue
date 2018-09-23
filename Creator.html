@@ -39,7 +39,7 @@
     <checkbox></checkbox>
     <searchbox xIconColor="rgba(0,153,204,1)"></searchbox>
     <toggle-switch xOnContent="Open" xOffContent="Close" xIsOn="true" xFunc="toggle"></toggle-switch>
-    <treeview xJson="objs"></treeview>
+    <treeview xJson="objs" xFunc="process"></treeview>
     <parallax-view xSource="res/158.jpg" xAcrylic="true">
         <calendar-view xTheme="dark"></calendar-view>
     </parallax-view>
@@ -64,9 +64,16 @@
             <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
         </div>
     </div> -->
-</div>
-<div xSweet="UI">
-    <progress-ring></progress-ring>
+	<flyout>
+        <p slot="flyout">Flyout</p>
+        <button slot="target" class="sbutton">Sample</button>
+    </flyout>
+    <pivot>
+        <option>All</option>
+        <option>P1</option>
+        <option>P2</option>
+    </pivot>
+    <calendar-date-picker></calendar-date-picker>
 </div>
 <script>
     console.log(Sweet.Controls);

@@ -80,23 +80,35 @@
                 {
                     case "Search":
                         this.xIcon = "\uE721";
+                        break;
                     case "Filter":
                         this.xIcon = "\uE16E";
+                        break;
                     case "Check":
                         this.xIcon = "\uE15E";
+                        break;
                     case "Edit":
                         this.xIcon = "\uE70F";
+                        break;
                     case "Submit":
                         this.xIcon = "\uE930";
+                        break;
                     case "Voice":
                         this.xIcon = "\uE1D6";
+                        break;
+                    case "Calendar":
+                        this.xIcon = "\uE787";
+                        break;
                     default:
                         this.xIcon = "\uE721";
+                        break;
                 }
                 if($(el).attr("xIconColor")!=null)
                     this.xIconColor.color = $(el).attr("xIconColor");
                 if($(el).attr("placeholder")!=null)
                     $(this.$refs.input).attr("placeholder",$(el).attr("placeholder"));
+                if($(el).attr("readonly")=="readonly")
+                    $(this.$refs.input).attr("readonly","readonly");
                 if($(el).attr("xChange")!=null)
                     $(this.$refs.input).keyup(function(){eval(`${$(el).attr("xChange")}("${$(target.$refs.input).val()}")`)});
                 if($(el).attr("xIconClick")!=null)
@@ -114,9 +126,9 @@
                 }
             }
         });
-        //ComboBox//xJson,xData//
+        //ComboBox//xJson,xData,xFunc,pFunc//
         Vue.component('combobox',{
-            template:`<div class="combobox" ref="co_head" style="width: 80px;" @click="isSelected">
+            template:`<div class="combobox" ref="co_head" style="width: 80px;" :style="{'z-index':status?500:''}" @click="isSelected">
                         <div v-show="false" ref="itemContainer"><slot></slot></div>
                         <div v-show="status" class="combobox-item-container" ref="co_items">
                             <option v-for="(item,index) in items" :class="{choose:index==currentIndex}" :index="index" @click="Choose">{{item.name==null?item:item.name}}</option>
@@ -181,6 +193,10 @@
                         this.updateItems();
                     }
                 }
+                if($(el).attr("xNow")!=undefined)
+                {
+                    this.now = $(el).attr("xNow");
+                }
             },
             methods:{
                 isSelected: function(e){
@@ -202,6 +218,8 @@
                     //xFunc//
                     if($(el.$el).attr("xFunc")!=undefined)
                         eval(`${$(el.$el).attr("xFunc")}('${this.value}',${this.currentIndex})`);
+                    if($(el.$el).attr("pFunc")!=undefined)  //pFunc//
+                        eval(`this.$parent.${$(el.$el).attr("pFunc")}('${this.value}',${this.currentIndex})`);
                 },
                 updateItems: function(){
                     for(let i = 0; i < this.items.length; i++)
@@ -503,7 +521,7 @@
                         target.sticky = true;
                         $(item).css("position","fixed");
                         $(item).css("left",target.left+"px");
-                        $(item).css("top","0px");
+                        $(item).css("top",target.offset + "px");
                         $(item).width(target.outerWidth);
                     }
                     else
@@ -606,6 +624,8 @@
                     let el = this.$el;
                     if($(el).attr("xFunc")!=undefined)
                         eval(`${$(el).attr("xFunc")}(${this.active})`);
+                    if($(el).attr("pFunc")!=undefined)  //pFunc//
+                        eval(`this.$parent.${$(el).attr("pFunc")}(${this.active})`);
                 }
             }
         });
@@ -613,7 +633,7 @@
         Vue.component('treeview',{
             template:`<div>
                         <div v-for="(item,index) in objs" class="treeview">
-                            <div class="item" :class="{'drop-down':isDropDown[index]}" @click="DropDown(index)"><p style="font-family: Segoe MDL2;" :style="{visibility: item.children!=null ? 'visible' : 'hidden'}">&#xE0E3;</p><p>{{item.name}}</p></div>
+                            <div class="item" :class="{'drop-down':isDropDown[index]}" :style="{padding:'3px '+ padding*25+'px',background:item.Choose?highlightColor:''}" @click="DropDown(index)"><p style="font-family: Segoe MDL2;" :style="{visibility: item.children!=null ? 'visible' : 'hidden'}">&#xE0E3;</p><p>{{item.name}}</p></div>
                             <transition name="treeview">
                             <treeview v-if="item.children!=null" v-show="isDropDown[index]" :xChildIndex="index"></treeview>
                             </transition>
@@ -622,18 +642,26 @@
             data: function(){
                 return {
                     objs:[],
-                    isDropDown:new Array()}
+                    rootObjs:[],
+                    padding:1,//层叠偏移大小//
+                    isDropDown:new Array(),
+                    highlightColor:'rgba(0,120,215,0.3)'}
             },
             mounted: function(){
                 let el = this.$el;
                 if($(el).attr("xJson")!=undefined)  //xJson不存在将以默认空数组返回//
                 {
                     this.objs = eval(`${$(el).attr("xJson")}`);
+                    this.rootObjs = this.objs;
                 }
                 else if($(el).attr("xChildIndex")!=undefined)
                 {
                     let index = $(el).attr("xChildIndex");
                     this.objs = this.$parent.objs[index].children;
+                    this.rootObjs = this.$parent.rootObjs;
+                    this.padding = this.$parent.padding + 1;
+                    if($(this.$parent.$el).attr("xFunc")!=undefined)
+                        $(el).attr("xFunc",$(this.$parent.$el).attr("xFunc"));
                 }
                 this.objInit();
             },
@@ -646,6 +674,24 @@
                 DropDown: function(index){
                     let nowStatus = this.isDropDown[index];
                     Vue.set(this.isDropDown,index,!nowStatus);  //我们可以动态控制数据的增减，但是我们却无法做到对某一条数据的修改//用Vue.set解决此问题//
+                    
+                    //xFunc//
+                    if($(this.$el).attr("xFunc")!=undefined)
+                        eval(`${$(this.$el).attr("xFunc")}('${this.objs[index].value}')`);
+                    
+                    this.ClearChoose(this.rootObjs);
+                    let t = this.objs[index];
+                    t.Choose = true;
+                    Vue.set(this.objs,index,t);
+                },
+                ClearChoose: function(objs){
+                    for(let i = 0; i < objs.length; i++){
+                        let t = objs[i];
+                        t.Choose = false;
+                        Vue.set(objs,i,t);
+                        if(objs[i].children!=null)
+                            this.ClearChoose(objs[i].children);
+                    }
                 }
             }
         });
@@ -738,6 +784,10 @@
                     this.updateDays();
                 },
                 pickDay: function(day){
+                    let tday = {year: day.cyear,
+                        month: day.cmonth,//for the picker shouldn't min 1//
+                        date: day.num};
+                    this.Func(tday);
                     return {
                         year: day.cyear,
                         month: day.cmonth - 1,
@@ -863,6 +913,80 @@
                         return true;
                     else
                         return false;
+                },
+                Func: function(day){
+                    let el = this;
+                    if($(el.$el).attr("xFunc")!=undefined)
+                        eval(`${$(el.$el).attr("xFunc")}(day)`);
+                    if($(el.$el).attr("pFunc")!=undefined)  //pFunc//
+                        eval(`this.$parent.${$(el.$el).attr("pFunc")}(day)`);
+                }
+            }
+        });
+        //CalendardatePicker//xTheme,xFunc,pFunc//
+        Vue.component('calendar-date-picker',{
+            template:`<div style="position: relative; width: 295px; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                        <div @click="picker">
+                            <searchbox placeholder="yyyy/mm/dd" xIcon="Calendar" readonly="readonly" style="width: 295px; height: 35px; border: rgba(0,0,0,0.2) solid 2px; border-radius: 0px;"/>
+                        </div>
+                        <transition 
+                        v-on:before-enter="beforeEnter"
+                        v-on:enter="enter">
+                        <calendar-view v-show="show" style="margin-top:5px;" pFunc="pickDay"></calendar-view>
+                        </transition>
+                    </div>`,
+            data: function(){
+                return {
+                    show:false,
+                    day:{
+                        year:1970,
+                        month:1,
+                        date:1
+                    },
+                    theme:false
+                }
+            },
+            mounted: function(){
+                let el = this;
+                let target = this.$el;
+                if($(target).attr("xTheme")=="dark"){
+                    this.theme = true;
+                    this.$children[1].theme = true;
+                    this.$children[0].xIconColor.color = 'rgba(255,255,255,0.6)';
+                }
+            },
+            methods: {
+                picker: function(){
+                    this.show = !this.show;
+                },
+                pickDay: function(day){
+                    this.day = day;
+                    $($(this.$el).find("input").get(0)).attr('placeholder',`${this.format(day.year)}/${this.format(day.month)}/${this.format(day.date)}`);
+                    this.show = false;
+                    this.Func(day);
+                },
+                format: function(num){
+                    if(num<10)
+                        return '0'+num;
+                    else
+                        return num;
+                },
+                beforeEnter: function(target){
+                    $(target).css("margin-top","-25px");
+                    $(target).css("opacity","0");
+                },
+                enter: function(target,done){
+                    $(target).animate({
+                        'margin-top': '5px',
+                        'opacity': '1'
+                    },{duration:120},done);
+                },
+                Func: function(day){
+                    let el = this;
+                    if($(el.$el).attr("xFunc")!=undefined)
+                        eval(`${$(el.$el).attr("xFunc")}(day)`);
+                    if($(el.$el).attr("pFunc")!=undefined)  //pFunc//
+                        eval(`this.$parent.${$(el.$el).attr("pFunc")}(day)`);
                 }
             }
         });
@@ -961,6 +1085,195 @@
                 },
                 get: function(name){
                     return this.pool[name]==undefined?false:this.pool[name];
+                }
+            }
+        });
+        //Flyout//xToward,xTheme,xFlyoutStyle//
+        Vue.component('flyout',{
+            template:`<div class="fly-out">
+                        <transition
+                        v-on:before-enter="beforeEnter"
+                        v-on:enter="enter"
+                        v-on:leave="leave">
+                        <div v-show="show" class="flyobj" :style="{'top':offset}" :class="[customerClass]" ref="flyobj" @mouseenter="mouseenter" @mouseleave="mouseleave">
+                            <slot name="flyout"></slot>
+                        </div>
+                        </transition>
+                        <div @mouseenter="mouseenter" @mouseleave="mouseleave"><slot name="target"></slot></div>
+                    </div>`,
+            data: function(){
+                return {
+                    show:false,
+                    theme:false,
+                    customerClass:'',
+                    toward:"up"
+                }
+            },
+            mounted: function(){
+                let el = this;
+                let target = this.$el;
+                if($(target).attr("xToward")!=undefined){
+                    this.toward=$(target).attr("xToward");
+                }
+                if(target.offsetTop-document.body.scrollTop<$(el.$refs.flyobj).height()){
+                    el.toward='down';
+                }
+                if($(target).attr("xFlyoutStyle")!=undefined){
+                    this.customerClass=$(target).attr("xFlyoutStyle");
+                }
+                if($(el).attr("xTheme")=="dark")
+                {
+                    this.theme = true;
+                }
+                this.correct();
+            },
+            computed:{
+                offset: function(){
+                    return this.toward=='down'?'100%':'-100%';
+                }
+            },
+            methods: {
+                mouseenter: function(){
+                    this.show = true;
+                },
+                mouseleave: function(){
+                    this.show = false;
+                },
+                beforeEnter: function(target){
+                    switch(this.toward){
+                        case "down":
+                        $(target).css("margin-top","-25px");
+                        target.style.opacity = 0;
+                        break;
+                        default:
+                        $(target).css("margin-top","25px");
+                        target.style.opacity = 0;
+                        break;
+                    }
+                },
+                enter: function(target,done){
+                    $(target).animate({
+                        'margin-top': '0px',
+                        'opacity': '1'
+                    },{duration:120},done);
+                },
+                leave: function(target,done){
+                    switch(this.toward){
+                        case "down":
+                        $(target).animate({
+                            'margin-top': '-25px',
+                            'opacity': '0'
+                        },{duration:50},done);
+                        break;
+                        default:
+                        $(target).animate({
+                            'margin-top': '25px',
+                            'opacity': '0'
+                        },{duration:50},done);
+                        break;
+                    }
+                },
+                correct: function(){    //校正朝向使得用户总能看到Flyout//
+                    let el = this;
+                    let target = this.$el;
+                    $(window).scroll(function(){
+                        if(target.offsetTop-document.body.scrollTop<$(el.$refs.flyobj).height()){
+                            el.toward='down';
+                        }
+                        else
+                            el.toward=$(target).attr("xToward");
+                    });
+                }
+            }
+        });
+        //Pivot//xTheme,xPivotStyle,xLightbarStyle,xOptionStyle,xOptionChooseStyle,xFunc,pFunc//
+        Vue.component('pivot',{
+            template:`<div class="pivot" :class="[theme?'dark':'',customerClass]">
+                        <div v-show="false" ref="package"><slot></slot></div>
+                        <p class="pivot-option" v-for="(item,index) in objs" :class="[customerOptionClass,currentIndex==index?customerOptionChooseClass:'']" :index="index" :value="item.value" @click="switchOn">{{item.name}}</p>
+                        <i class="pivot-lightbar" :class="[customerLightClass]" ref="lighting"></i>
+                    </div>`,
+            data: function(){
+                return {
+                    objs:[{name:"Empty",value:0}],
+                    currentIndex:0,
+                    lastOption:{},
+                    theme:false,
+                    customerClass:"",
+                    customerLightClass:"",
+                    customerOptionClass:"",
+                    customerOptionChooseClass:"choose"
+                }
+            },
+            mounted: function(){
+                let el = this;
+                let target = this.$el;
+                let tObjs = [];
+                $.each($(this.$refs.package).children("*"),function(i,item){
+                    tObjs.push({name:$(item).text(),value:$(item).attr("value")});
+                    if(tObjs[i].value==undefined){
+                        tObjs[i].value=i;
+                    }
+                });
+                this.objs = tObjs;
+                this.lastOption.target = $(target).children(".pivot-option").get(0);
+                this.init();
+
+                if($(target).attr("xTheme")=="dark"){
+                    this.theme = true;
+                }
+                if($(target).attr("xPivotStyle")!=undefined){
+                    this.customerClass=$(target).attr("xPivotStyle");
+                }
+                if($(target).attr("xLightbarStyle")!=undefined){
+                    this.customerLightClass=$(target).attr("xLightbarStyle");
+                }
+                if($(target).attr("xOptionStyle")!=undefined){
+                    this.customerOptionClass=$(target).attr("xOptionStyle");
+                }
+                if($(target).attr("xOptionChooseStyle")!=undefined){
+                    this.customerOptionChooseClass=$(target).attr("xOptionChooseStyle");
+                }
+            },
+            computed:{
+                
+            },
+            methods: {
+                init: function(){
+                    $(this.$refs.lighting).css("left",$(this.lastOption.target).offset().left+'px');
+                    $(this.$refs.lighting).css("width",$(this.lastOption.target).width()+'px');
+                },
+                switchOn: function(e){
+                    this.currentIndex = $(e.target).attr("index");
+                    let disWidth = Math.abs($(e.target).offset().left - $(this.lastOption.target).offset().left)+$(e.target).width();
+                    if($(e.target).attr("index")>$(this.lastOption.target).attr("index")){
+                        $(this.$refs.lighting).animate({
+                            width:disWidth+'px',
+                        },{duration:180});
+                        $(this.$refs.lighting).animate({
+                            left:$(e.target).offset().left,
+                            width:$(e.target).width()+'px'
+                        },{duration:50});
+                    }
+                    else
+                    {
+                        $(this.$refs.lighting).animate({
+                            width:disWidth+'px',
+                            left:$(e.target).offset().left,
+                        },{duration:180});
+                        $(this.$refs.lighting).animate({
+                            width:$(e.target).width()+'px'
+                        },{duration:50});
+                    }
+                    this.lastOption.target = e.target;
+                    this.Func($(e.target).attr("value"),$(e.target).attr("index"));
+                },
+                Func: function(val,index){
+                    let el = this;
+                    if($(el.$el).attr("xFunc")!=undefined)
+                        eval(`${$(el.$el).attr("xFunc")}('${val}',${index})`);
+                    if($(el.$el).attr("pFunc")!=undefined)  //pFunc//
+                        eval(`this.$parent.${$(el.$el).attr("pFunc")}('${val}',${index})`);
                 }
             }
         });
@@ -1145,11 +1458,13 @@
                             <i id="s_info_icon" style="font-family: Segoe MDL2; color: rgba(255,255,255,1); font-style: normal; text-align: center;">&#xE783;</i>
                             <span style="margin-left: 5px; font-family: 微软雅黑; font-size: 13px; color: rgba(255,255,255,1); text-align: center;">${title}</span>
                         </div>
-                        <span style="width: 100%; margin-top: 15px; font-family: 微软雅黑; font-size: 15px; text-indent: 5px; text-align: left;">${content}</span>
+                        <span id="s_info_content" style="width: 100%; margin-top: 15px; font-family: 微软雅黑; font-size: 15px; text-indent: 5px; text-align: left;">${content}</span>
                         <button class="sbutton black glass" style="width: 150px; margin: 15px;" onClick="$('#s_info_box').fadeOut();">关闭</button>
                     </div>
                 </div>`);
             }
+            else
+                $("#s_info_content").html(content);
             $("#s_info_box").css('display','flex');
             if(themeColor==" dark")
                 $("#s_info_box").css("background","rgba(0,0,0,0.6)");

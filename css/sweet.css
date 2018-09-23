@@ -399,7 +399,7 @@ input.sinput.search
 	overflow: auto;
 	-webkit-backdrop-filter:blur(8px);
 	-ms-overflow-style: -ms-autohiding-scrollbar;
-    z-index: 120;
+    z-index: 125;
 }
 .combobox-item-container::-webkit-scrollbar
 {
@@ -1090,12 +1090,12 @@ input.sinput.search
 	box-shadow: -3px 3px 10px rgba(0,0,0,0.2);
 }
 
+/*New TreeView*/
 .treeview
 {
     position: relative;
     width: 100%;
     height: auto;
-    padding: 3px 25px;
     font-family: "微软雅黑";
     box-sizing: border-box;
     display: flex;
@@ -1108,7 +1108,8 @@ input.sinput.search
 .treeview .item
 {
     width: 100%;
-    height: 45px;
+	height: 45px;
+	padding: 3px 5px;
     font-family: "微软雅黑";
     box-sizing: border-box;
     display: flex;
@@ -1373,4 +1374,111 @@ input.sinput.search
 	height: auto;
 	display: block;
 	z-index: -1;
+}
+
+.fly-out
+{
+	position: relative;
+}
+.fly-out .flyobj
+{
+	position: absolute;
+	top: -100%;
+	width: 120px;
+	height: 35px;
+	padding: 15px;
+	background: whitesmoke;
+	font-family: "微软雅黑";
+	font-size: 12px;
+	border: rgba(0,0,0,0.1) solid 1px;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+.fly-out .flyobj:hover
+{
+	border: rgba(61,164,195,0.6) solid 1px;
+	transition-delay: 0.2s;
+	-webkit-transition-delay: 0.2s;
+}
+
+.fly-out .flyobj.dark
+{
+	background: rgba(36,36,36,0.8);
+	border: rgba(240,240,240,0.1) solid 1px;
+	color: whitesmoke;
+}
+.fly-out .flyobj.dark:hover
+{
+	border: rgba(24,123,171,1) solid 1px;
+	transition-delay: 0.2s;
+	-webkit-transition-delay: 0.2s;
+}
+
+.pivot
+{
+    position: relative;
+    width: 100%;
+    height: 45px;
+    font-family: '微软雅黑';
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.pivot-option
+{
+    min-width: 50px;
+	height: 100%;
+	margin: 0px 5px;
+    padding: 15px 0px;
+    color: rgba(95,95,95,1);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: default;
+}
+.pivot .pivot-option:hover
+{
+    color: rgba(36,36,36,1);
+}
+.pivot .pivot-option.choose
+{
+	color: rgba(36,36,36,1);
+}
+
+.pivot-lightbar
+{
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    min-width: 50px;
+    height: 2px;
+	background: rgba(72,133,196,1.00);
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+
+.pivot.dark
+{
+	background: rgba(0,0,0,1);
+}
+
+.pivot.dark .pivot-option
+{
+	color: rgba(255,255,255,0.6);
+}
+.pivot.dark .pivot-option:hover
+{
+	color: whitesmoke;
+}
+.pivot.dark .pivot-option.choose
+{
+	color: whitesmoke;
 }

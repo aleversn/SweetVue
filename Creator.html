@@ -43,6 +43,9 @@
     <parallax-view xSource="res/158.jpg" xAcrylic="true">
         <calendar-view xTheme="dark"></calendar-view>
     </parallax-view>
+    <div style="width: 100%; margin-top: 200px; height: 300px; display: flex; justify-content: center; align-items: center;">
+        <scroll-reveal xAnimate="test" xMode="upNdown"><h1 style="font-size: 95px;">1</h1></scroll-reveal>
+    </div>
     <x-binding xData="bindingData">
         <div slot-scope="x">Container
             <p :value="x.binding.name">{{x.binding.name}}</p>
@@ -73,8 +76,41 @@
         <option>P1</option>
         <option>P2</option>
     </pivot>
-    <calendar-date-picker></calendar-date-picker>
+    <div style="height:600px;">
+        <calendar-date-picker></calendar-date-picker>
+        <date-picker></date-picker>
+        <time-picker></time-picker>
+    </div>
 </div>
+<div xSweet="UI">
+    <scroll-reveal xAnimate="test" xMode="once">
+        <h1>13165949</h1>
+    </scroll-reveal>
+</div>
+<style>
+.test-enter-active
+{
+    margin-left: 550px;
+    opacity: 0;
+    transition: all 1s;
+}
+.test-enter-to
+{
+    margin-left: 0px;
+    opacity: 1;
+}
+.test-leave-active
+{
+    opacity: 1;
+    transition: all 1s;
+}
+.test-leave-to
+{
+    margin-left: 550px;
+    opacity: 0;
+    transition: all 1s;
+}
+</style>
 <script>
     console.log(Sweet.Controls);
     let xxx = {}

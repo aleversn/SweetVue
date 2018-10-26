@@ -1468,7 +1468,15 @@ input.sinput.search
     position: relative;
     width: 100%;
     height: 45px;
+<<<<<<< HEAD
     font-family: Segoe MDL2, '微软雅黑';
+=======
+<<<<<<< HEAD
+    font-family: Segoe MDL2, '微软雅黑';
+=======
+    font-family: '微软雅黑';
+>>>>>>> a29e91f5fff4e6c37dfdc1c01c07c96ea9be1b70
+>>>>>>> 4bda2f5e5042b2c3a1491f4730aa8acb8c080ebb
     box-sizing: border-box;
     display: flex;
     justify-content: flex-start;
@@ -1526,6 +1534,10 @@ input.sinput.search
 .pivot.dark .pivot-option.choose
 {
 	color: whitesmoke;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 4bda2f5e5042b2c3a1491f4730aa8acb8c080ebb
 }
 
 .date-picker
@@ -1643,4 +1655,9 @@ input.sinput.search
 .date-picker-wheel.dark p:active
 {
 	background: rgba(255,255,255,0.15);
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> a29e91f5fff4e6c37dfdc1c01c07c96ea9be1b70
+>>>>>>> 4bda2f5e5042b2c3a1491f4730aa8acb8c080ebb
 }

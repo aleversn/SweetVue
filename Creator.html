@@ -28,34 +28,37 @@
     <scroll-sticky>
         <glass-button>OK</glass-button>
     </scroll-sticky>
-    <glass-button>OK</glass-button>
+    <glass-button onclick="xxx.ratio=xxx.ratio>100?xxx.ratio-30:xxx.ratio+30;">OK</glass-button>
     <combobox>
         <p>a</p>
         <p>b</p>
         <p>c</p>
     </combobox>
     <progress-ring></progress-ring>
-    <progress-bar xLoading="true"></progress-bar>
+    <progress-bar xColor="red" xPercent="xxx" xFunc="process finished"></progress-bar>
     <checkbox></checkbox>
     <searchbox xIconColor="rgba(0,153,204,1)"></searchbox>
-    <toggle-switch xOnContent="Open" xOffContent="Close" xIsOn="true"></toggle-switch>
-    <treeview xJson="objs"></treeview>
+    <toggle-switch xOnContent="Open" xOffContent="Close" xIsOn="true" xFunc="toggle"></toggle-switch>
+    <treeview xJson="objs" xFunc="process"></treeview>
     <parallax-view xSource="res/158.jpg" xAcrylic="true">
         <calendar-view xTheme="dark"></calendar-view>
     </parallax-view>
-    <x-binding xData="objs">
+    <div style="width: 100%; margin-top: 200px; height: 300px; display: flex; justify-content: center; align-items: center;">
+        <scroll-reveal xAnimate="test" xMode="upNdown"><h1 style="font-size: 95px;">1</h1></scroll-reveal>
+    </div>
+    <x-binding xData="bindingData">
         <div slot-scope="x">Container
             <p :value="x.binding.name">{{x.binding.name}}</p>
             <p>{{x.binding.value}}</p>
         </div>
     </x-binding>
-<!--
+<!-- 
     <flipview style="height: 500px;">
         <div style="background: rgba(242,242,242,1);"><img alt="" src="res/10.jpg"/></div>
         <div style="background: red;"><img alt="" src="res/158.jpg"/></div>
         <div style="background: green;"><img alt="" src="res/159.jpg"/></div>
-    </flipview>
--->
+    </flipview> -->
+
     <!-- <div class="treeview">
         <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
         <div class="item drop-down"><p style="font-family: Segoe MDL2; visibility: hidden;">&#xE0E3;</p><p>1</p></div>
@@ -64,12 +67,62 @@
             <div class="item drop-down"><p style="font-family: Segoe MDL2;">&#xE0E3;</p><p>1</p></div>
         </div>
     </div> -->
+	<flyout>
+        <p slot="flyout">Flyout</p>
+        <button slot="target" class="sbutton">Sample</button>
+    </flyout>
+    <pivot>
+        <option>All</option>
+        <option>P1</option>
+        <option>P2</option>
+    </pivot>
+    <div style="height:600px;">
+        <calendar-date-picker></calendar-date-picker>
+        <date-picker></date-picker>
+        <time-picker></time-picker>
+    </div>
 </div>
 <div xSweet="UI">
-    <progress-ring></progress-ring>
+    <scroll-reveal xAnimate="test" xMode="once">
+        <h1>13165949</h1>
+    </scroll-reveal>
 </div>
+<style>
+.test-enter-active
+{
+    margin-left: 550px;
+    opacity: 0;
+    transition: all 1s;
+}
+.test-enter-to
+{
+    margin-left: 0px;
+    opacity: 1;
+}
+.test-leave-active
+{
+    opacity: 1;
+    transition: all 1s;
+}
+.test-leave-to
+{
+    margin-left: 550px;
+    opacity: 0;
+    transition: all 1s;
+}
+</style>
 <script>
     console.log(Sweet.Controls);
+    let xxx = {}
+    function process(data){
+        console.log("percent"+" "+data);
+    }
+    function finished(data){
+        console.log("finished");
+    }
+    function toggle(status){
+        console.log(status);
+    }
     var objs = [
         {name:"lpc",value:"1",children:[
             {name:"lpc1",value:"11",children:[
@@ -81,6 +134,17 @@
         {name:"wsj",value:"4",children:null},
         {name:"zxf",value:"5",children:null}
     ];
+    var bindingData = {xData:[
+        {name:"lpc",value:"1",children:[
+            {name:"lpc1",value:"11",children:[
+                {name:"lpc11",value:"111",children:null}
+            ]},
+            {name:"lpc2",value:"2",children:null},
+            {name:"lpc3",value:"3",children:null}
+        ]},
+        {name:"wsj",value:"4",children:null},
+        {name:"zxf",value:"5",children:null}
+    ]};
 </script>
 
 <script>

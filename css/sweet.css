@@ -9,6 +9,12 @@
 	src: url(fonts/segmdl2.ttf);
 }
 
+@font-face
+{
+	font-family: 'Segoe UI Symbol';
+	src: url(fonts/seguisym.ttf);
+}
+
 .sbutton
 {
 	width: 120px;
@@ -137,6 +143,23 @@
 	color: rgba(242,242,242,1);
 }
 
+.sbutton.stdblue
+{
+	background: rgba(0,120,212,1.00);
+	border: thin;
+	color: rgba(242,242,242,0.95);
+}
+.sbutton.stdblue:hover
+{
+	background: rgba(0,120,212,0.8);
+	color: rgba(242,242,242,1);
+}
+.sbutton.stdblue:active
+{
+	background: rgba(0,120,212,0.95);
+	color: rgba(242,242,242,1);
+}
+
 .sbutton.blue.glass
 {
 	background: transparent;
@@ -236,6 +259,23 @@
 .sbutton.black.glass:active
 {
 	background: rgba(36,36,36,0.95);
+	color: rgba(242,242,242,1);
+}
+
+.sbutton.blue.glass
+{
+	background: transparent;
+	border: rgba(0,120,212,1.00) solid 1px;
+	color: rgba(0,120,212,1.00);
+}
+.sbutton.blue.glass:hover
+{
+	background: rgba(0,120,212,0.8);
+	color: rgba(242,242,242,1);
+}
+.sbutton.blue.glass:active
+{
+	background: rgba(0,120,212,0.95);
 	color: rgba(242,242,242,1);
 }
 
@@ -399,7 +439,7 @@ input.sinput.search
 	overflow: auto;
 	-webkit-backdrop-filter:blur(8px);
 	-ms-overflow-style: -ms-autohiding-scrollbar;
-    z-index: 120;
+    z-index: 125;
 }
 .combobox-item-container::-webkit-scrollbar
 {
@@ -1090,12 +1130,12 @@ input.sinput.search
 	box-shadow: -3px 3px 10px rgba(0,0,0,0.2);
 }
 
+/*New TreeView*/
 .treeview
 {
     position: relative;
     width: 100%;
     height: auto;
-    padding: 3px 25px;
     font-family: "微软雅黑";
     box-sizing: border-box;
     display: flex;
@@ -1108,7 +1148,8 @@ input.sinput.search
 .treeview .item
 {
     width: 100%;
-    height: 45px;
+	height: 45px;
+	padding: 3px 5px;
     font-family: "微软雅黑";
     box-sizing: border-box;
     display: flex;
@@ -1116,7 +1157,7 @@ input.sinput.search
     align-items: center;
 }
 
-.treeview .item p:first-child
+.treeview .item p.icon
 {
     font-size: 13px;
 	transition: all 0.3s;
@@ -1124,20 +1165,25 @@ input.sinput.search
 	-webkit-transition: all 0.3s;
 	-webkit-user-select: none;
 }
-.treeview .item:hover p:first-child
+.treeview .item:hover p.icon
 {
     color: cornflowerblue;
 }
 
-.treeview .item p:last-child
+.treeview .item p.content
 {
     margin-left: 15px;
     color: rgba(36,36,36,1);
 }
 
-.treeview .item.drop-down p:first-child
+.treeview .item.drop-down p.icon
 {
     transform: rotate(90deg);
+}
+
+.treeview .item.highlight
+{
+	background: rgba(0,120,215,0.3);
 }
 
 .treeview-enter-active
@@ -1373,4 +1419,227 @@ input.sinput.search
 	height: auto;
 	display: block;
 	z-index: -1;
+}
+
+.fly-out
+{
+	position: relative;
+}
+.fly-out .flyobj
+{
+	position: absolute;
+	top: -100%;
+	width: 120px;
+	height: 35px;
+	padding: 15px;
+	background: whitesmoke;
+	font-family: "微软雅黑";
+	font-size: 12px;
+	border: rgba(0,0,0,0.1) solid 1px;
+	box-sizing: border-box;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+.fly-out .flyobj:hover
+{
+	border: rgba(61,164,195,0.6) solid 1px;
+	transition-delay: 0.2s;
+	-webkit-transition-delay: 0.2s;
+}
+
+.fly-out .flyobj.dark
+{
+	background: rgba(36,36,36,0.8);
+	border: rgba(240,240,240,0.1) solid 1px;
+	color: whitesmoke;
+}
+.fly-out .flyobj.dark:hover
+{
+	border: rgba(24,123,171,1) solid 1px;
+	transition-delay: 0.2s;
+	-webkit-transition-delay: 0.2s;
+}
+
+.pivot
+{
+    position: relative;
+    width: 100%;
+    height: 45px;
+    font-family: Segoe MDL2, '微软雅黑';
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.pivot-option
+{
+    min-width: 50px;
+	height: 100%;
+	margin: 0px 5px;
+    padding: 15px 0px;
+    color: rgba(95,95,95,1);
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    cursor: default;
+}
+.pivot .pivot-option:hover
+{
+    color: rgba(36,36,36,1);
+}
+.pivot .pivot-option.choose
+{
+	color: rgba(36,36,36,1);
+}
+
+.pivot-lightbar
+{
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    min-width: 50px;
+    height: 2px;
+	background: rgba(72,133,196,1.00);
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+
+.pivot.dark
+{
+	background: rgba(0,0,0,1);
+}
+
+.pivot.dark .pivot-option
+{
+	color: rgba(255,255,255,0.6);
+}
+.pivot.dark .pivot-option:hover
+{
+	color: whitesmoke;
+}
+.pivot.dark .pivot-option.choose
+{
+	color: whitesmoke;
+}
+
+.date-picker
+{
+    position: relative;
+    width: 295px;
+    height: auto;
+}
+
+.date-picker-input
+{
+    position: relative;
+    width: 100%;
+    height: 35px;
+    font-family: '微软雅黑';
+    font-size: 15px;
+    border: rgba(0,0,0,0.2) solid 2px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+	align-items: center;
+	transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+}
+.date-picker-input:hover
+{
+	border: rgba(0,0,0,0.6) solid 2px;
+}
+.date-picker-input:active
+{
+	background: rgba(0,0,0,0.3);
+	border: rgba(0,0,0,0.35) solid 2px;
+}
+
+.date-picker-input.dark
+{
+	background: rgba(0,0,0,0.6);
+	border: rgba(255,255,255,0.2) solid 2px;
+}
+.date-picker-input.dark:hover
+{
+	border: rgba(255,255,255,0.6) solid 2px;
+}
+
+.date-picker-input p
+{
+    width: 25%;
+    height: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+	align-items: center;
+	cursor: default;
+}
+
+.date-picker-input.dark p
+{
+	color: whitesmoke;
+}
+
+.date-picker-container
+{
+    position: absolute;
+    top: -160px;
+    width: 100%;
+    height: 390px;
+	background: rgba(245,245,245,0.9);
+	border: rgba(0,0,0,0.1) solid 1px;
+	box-sizing: border-box;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+	justify-content: space-between;
+	-webkit-backdrop-filter: blur(10px);
+	overflow: hidden;
+}
+.date-picker-container.dark
+{
+	background: rgba(0,0,0,0.8);
+}
+
+.date-picker-wheel p
+{
+    width: 100%;
+    height: 50px;
+    padding: 15px;
+    font-family: "微软雅黑";
+    font-size: 15px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+	cursor: default;
+	user-select: none;
+}
+.date-picker-wheel p:hover
+{
+    background: rgba(0,0,0,0.1);
+}
+.date-picker-wheel p:active
+{
+    background: rgba(0,0,0,0.15);
+}
+
+.date-picker-wheel.dark p
+{
+	color: whitesmoke;
+}
+.date-picker-wheel.dark p:hover
+{
+	background: rgba(255,255,255,0.1);
+}
+.date-picker-wheel.dark p:active
+{
+	background: rgba(255,255,255,0.15);
 }

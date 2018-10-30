@@ -1662,8 +1662,7 @@
                     customerClass:"",
                     customerLightClass:"",
                     customerOptionClass:"",
-                    customerOptionChooseClass:"choose",
-                    parentOffsetLeft:0
+                    customerOptionChooseClass:"choose"
                 }
             },
             mounted: function(){
@@ -1696,7 +1695,6 @@
                     let el = this;
                     let target = this.$el;
                     let tObjs = [];
-                    this.parentOffsetLeft = $(target).offset().left;
                     $.each($(this.$refs.package).children("*"),function(i,item){
                         tObjs.push({name:$(item).text(),value:$(item).attr("value")});
                         if(tObjs[i].value==undefined){
@@ -1706,7 +1704,7 @@
                     this.objs = tObjs;
                     this.lastOption.target = $(target).children(".pivot-option").get(0);
 					$(this.lastOption.target).ready(function(){
-						$(el.$refs.lighting).css("left",$(el.lastOption.target).offset().left - el.parentOffsetLeft +'px');
+						$(el.$refs.lighting).css("left",el.lastOption.target.offsetLeft +'px');
 						$(el.$refs.lighting).css("width",$(el.lastOption.target).width()+'px');
 					});
                 },
@@ -1719,7 +1717,7 @@
                             width:disWidth+'px',
                         },{duration:180});
                         $(this.$refs.lighting).animate({
-                            left:$(e.target).offset().left - el.parentOffsetLeft,
+                            left:e.target.offsetLeft,
                             width:$(e.target).width()+'px'
                         },{duration:50});
                     }
@@ -1727,7 +1725,7 @@
                     {
                         $(this.$refs.lighting).animate({
                             width:disWidth+'px',
-                            left:$(e.target).offset().left - el.parentOffsetLeft,
+                            left:e.target.offsetLeft,
                         },{duration:180});
                         $(this.$refs.lighting).animate({
                             width:$(e.target).width()+'px'

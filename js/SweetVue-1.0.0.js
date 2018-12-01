@@ -128,6 +128,8 @@
                     $(this.$refs.icon).click(function(){eval(`${$(el).attr("xIconClick")}("${$(target.$refs.input).val()}")`)});
                 if($(el).attr("pIconClick")!=null)
                     $(this.$refs.icon).click(function(){eval(`target.$parent.${$(el).attr("pIconClick")}("${$(target.$refs.input).val()}")`)});
+                if($(el).attr("xModel")!=null)
+                    this.xModel($(el).attr("xModel"));
             },
             methods:{
                 Clicked: function(){
@@ -138,6 +140,20 @@
                         this.xIconColor.color = $(this.$el).attr("xIconColor");
                     else
                         this.xIconColor.color = "rgba(36,36,36,1)";
+                },
+                xModel (ParamName) {
+                    let el = this;
+					// let val = "";	//用val存储content的值//属性与存取描述符//因为Object.defineProperty中的this不一定指当前this，所以在不用el的情况下可以用val做中介///
+                    Object.defineProperty(el,'content',{  //设立content监听//
+                        get: function(){
+							eval(`content = el.$parent.${ParamName};`);
+                            return content;
+                        },
+                        set: function(value){
+							content = value;
+                            eval(`el.$parent.${ParamName} = content;`);
+                        }
+                    });
                 }
             }
         });
@@ -393,13 +409,13 @@
                         var container = this.$refs.container;   //渲染容器//
                         var package = this.$refs.package;   //假仓库容器//
                         var speed = f>0?Math.round(this.speed/f):this.speed;
+                        $(package).children("div").css("margin","0px"); //清除假仓库中的Margin//
                         $(container).append($(package).children("div").get(0));
                         $($(container).children("div").get(0)).animate({
                             margin:"0px 0px 0px -100%"
                         },{ duration: speed, easing: "swing" });
                         setTimeout(function(){
                             $(package).append($(container).children("div").get(0));
-                            $(package).children("div").css("margin","0px");
                             el.lock = true;
                             el.slider();   //恢复时钟秩序//
                         },speed);
@@ -413,6 +429,7 @@
                         var container = this.$refs.container;
                         var package = this.$refs.package;
                         var speed = f>0?Math.round(this.speed/f):this.speed;
+                        $(package).children("div").css("margin","0px"); //清除假仓库中的Margin//
                         $($(container).children("div").get(0)).before($(package).children("div:last-child"));
                         $($(container).children("div").get(0)).css("margin","0px 0px 0px -100%");
                         $($(container).children("div").get(0)).animate({
@@ -420,7 +437,6 @@
                         },{ duration: speed, easing: "swing" });
                         setTimeout(function(){
                             $($(package).children("div").get(0)).before($(container).children("div:last-child"));
-                            $(package).children("div:last-child").css("margin","0px");
                             el.lock = true;
                             el.slider();   //恢复时钟秩序//
                         },speed);
@@ -626,7 +642,6 @@
             methods:{
                 toggle: function(){
                     this.active=!this.active;
-                    this.updateStatus();
                 },
                 updateStatus: function(){
                     $(this.$el).attr("value",this.active);
@@ -643,6 +658,7 @@
                         eval(`${$(el).attr("xFunc")}(${this.active})`);
                     if($(el).attr("pFunc")!=undefined)  //pFunc//
                         eval(`this.$parent.${$(el).attr("pFunc")}(${this.active})`);
+                    this.updateStatus();
                 }
             }
         });

@@ -124,10 +124,20 @@
                     $(this.$refs.input).keyup(function(){eval(`${$(el).attr("xChange")}("${$(target.$refs.input).val()}")`)});
                 if($(el).attr("pChange")!=null)
                     $(this.$refs.input).keyup(function(){eval(`target.$parent.${$(el).attr("pChange")}("${$(target.$refs.input).val()}")`)});
-                if($(el).attr("xIconClick")!=null)
+                if($(el).attr("xIconClick")!=null){
+                    $(this.$refs.input).keyup((e)=>{
+                        if(e.keyCode==13)
+                            eval(`target.$parent.${$(el).attr("pIconClick")}("${$(target.$refs.input).val()}")`);
+                    });
                     $(this.$refs.icon).click(function(){eval(`${$(el).attr("xIconClick")}("${$(target.$refs.input).val()}")`)});
-                if($(el).attr("pIconClick")!=null)
+                }
+                if($(el).attr("pIconClick")!=null){
+                    $(this.$refs.input).keyup((e)=>{
+                        if(e.keyCode==13)
+                            eval(`target.$parent.${$(el).attr("pIconClick")}("${$(target.$refs.input).val()}")`);
+                    });
                     $(this.$refs.icon).click(function(){eval(`target.$parent.${$(el).attr("pIconClick")}("${$(target.$refs.input).val()}")`)});
+                }
                 if($(el).attr("xModel")!=null)
                     this.xModel($(el).attr("xModel"));
             },
@@ -407,15 +417,15 @@
                         el.lock = false;
                         this.counton(); //计数器加一//
                         var container = this.$refs.container;   //渲染容器//
-                        var package = this.$refs.package;   //假仓库容器//
+                        var package_ = this.$refs.package;   //假仓库容器//
                         var speed = f>0?Math.round(this.speed/f):this.speed;
-                        $(package).children("div").css("margin","0px"); //清除假仓库中的Margin//
-                        $(container).append($(package).children("div").get(0));
+                        $(package_).children("div").css("margin","0px"); //清除假仓库中的Margin//
+                        $(container).append($(package_).children("div").get(0));
                         $($(container).children("div").get(0)).animate({
                             margin:"0px 0px 0px -100%"
                         },{ duration: speed, easing: "swing" });
                         setTimeout(function(){
-                            $(package).append($(container).children("div").get(0));
+                            $(package_).append($(container).children("div").get(0));
                             el.lock = true;
                             el.slider();   //恢复时钟秩序//
                         },speed);
@@ -427,16 +437,16 @@
                         el.lock = false;
                         this.countdis();    //计数器减一//
                         var container = this.$refs.container;
-                        var package = this.$refs.package;
+                        var package_ = this.$refs.package;
                         var speed = f>0?Math.round(this.speed/f):this.speed;
-                        $(package).children("div").css("margin","0px"); //清除假仓库中的Margin//
-                        $($(container).children("div").get(0)).before($(package).children("div:last-child"));
+                        $(package_).children("div").css("margin","0px"); //清除假仓库中的Margin//
+                        $($(container).children("div").get(0)).before($(package_).children("div:last-child"));
                         $($(container).children("div").get(0)).css("margin","0px 0px 0px -100%");
                         $($(container).children("div").get(0)).animate({
                             margin:"0px 0px 0px 0px"
                         },{ duration: speed, easing: "swing" });
                         setTimeout(function(){
-                            $($(package).children("div").get(0)).before($(container).children("div:last-child"));
+                            $($(package_).children("div").get(0)).before($(container).children("div:last-child"));
                             el.lock = true;
                             el.slider();   //恢复时钟秩序//
                         },speed);
@@ -1413,7 +1423,7 @@
                     this.init();
                 },
                 clickMinute: function(index){
-                    this.day.minute = this.Mode(this.minuteRange.s + index,60);
+                    this.time.minute = this.Mode(this.minuteRange.s + index,60);
                     this.init();
                 },
                 Mode: function(num,mod){    //标准模运算

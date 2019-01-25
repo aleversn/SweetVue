@@ -304,6 +304,18 @@
 	color: rgba(36,36,36,0.9);
 }
 
+.sbutton:disabled
+{
+	background: rgba(120,120,120,1);
+	color: whitesmoke;
+}
+
+.sbutton:disabled:hover,.sbutton:disabled:active
+{
+	background: rgba(120,120,120,1);
+	color: whitesmoke;
+}
+
 .gbutton
 {
 	width: 80px;
@@ -366,10 +378,6 @@ div.checkBox
 	transition: all 0.2s;
 	-webkit-transition: all 0.2s;
 }
-.sinput:hover
-{
-	border: rgba(0,153,204,0.3) solid 1px;
-}
 
 div.sinput.search
 {
@@ -380,10 +388,6 @@ div.sinput.search
 	box-sizing: border-box;
     overflow: hidden;
 }
-div.sinput.search:hover
-{
-	border: rgba(0,153,204,0.3) solid 1px;
-}
 input.sinput.search
 {
     height: 30px;
@@ -393,7 +397,7 @@ input.sinput.search
 .search-icon
 {
     padding: 5px;
-	font-family: Segoe MDL2;
+	font-family: 'Segoe MDL2';
 	cursor: pointer;
     user-select: none;
     -webkit-user-select: none;
@@ -431,6 +435,7 @@ input.sinput.search
     left: 0;
     top: 0;
 	width: 100%;
+	height: auto;
 	max-height: 300px;
 	padding: 8px 0px;
     background: rgba(242,242,242,0.9);
@@ -534,7 +539,7 @@ input.sinput.search
 	position: absolute;
 	height: 35px;
 	padding: 8px;
-	font-family: Segoe MDL2;
+	font-family: 'Segoe MDL2';
 	font-size: 13px;
 	background: rgba(0,0,0,0.5);
 	color: rgba(242,242,242,0.6);
@@ -563,7 +568,7 @@ input.sinput.search
     width: 25px;
     height: 50px;
     background: rgba(0,0,0,0.05);
-    font-family: Segoe MDL2;
+    font-family: 'Segoe MDL2';
     font-size: 12px;
     display: flex;
     justify-content: center;
@@ -613,7 +618,7 @@ input.sinput.search
     bottom: 0px;
     width: 100%;
     height: 50px;
-    font-family: Segoe MDL2;
+    font-family: 'Segoe MDL2';
     font-size: 12px;
     display: flex;
     justify-content: center;
@@ -635,7 +640,7 @@ input.sinput.search
     width: 30px;
     height: 30px;
     background: transparent;
-    font-family: Segoe MDL2;
+    font-family: 'Segoe MDL2';
     border: thin;
     outline: none;
     display: flex;
@@ -875,6 +880,21 @@ input.sinput.search
 	0%{transform: scale(0.7,0.7);}
 	70%{transform: scale(1.1,1.1);}
 	100%{transform: scale(1,1);}
+}
+
+@media screen and (max-width: 1024px)
+{
+    .sinfo-box
+    {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        min-width: 100%;
+        width: 100%;
+        min-height: 100%;
+        height: 100%;
+        border-radius: 0px;
+    }
 }
 
 .s-progressring
@@ -1227,7 +1247,7 @@ input.sinput.search
 {
 	width: 100%;
 	height: 40px;
-	font-family: '微软雅黑',Segoe MDL2;
+	font-family: '微软雅黑','Segoe MDL2';
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -1279,7 +1299,7 @@ input.sinput.search
 
 .calendar-view .control-bar .slider-bar p
 {
-	font-family: Segoe MDL2;
+	font-family: 'Segoe MDL2';
 	font-size: 15px;
 	transition: all 0.3s;
 	-webkit-transition: all 0.3s;
@@ -1469,7 +1489,7 @@ input.sinput.search
     position: relative;
     width: 100%;
     height: 45px;
-    font-family: Segoe MDL2, '微软雅黑';
+    font-family: 'Segoe MDL2', '微软雅黑';
     box-sizing: border-box;
     display: flex;
     justify-content: flex-start;
